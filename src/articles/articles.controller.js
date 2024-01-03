@@ -1,13 +1,13 @@
 import ArticlesService from './articles.service.js';
 
 class ArticleController {
-  findAll(req, res) {
-    res.json(ArticlesService.find());
+  async findAll(req, res) {
+    res.json(await ArticlesService.find());
   }
 
-  search(req, res) {
+  async search(req, res) {
     const searchTerm = req.params.searchTerm;
-    res.json(ArticlesService.search(searchTerm));
+    res.json(await ArticlesService.search(searchTerm));
   }
 }
 

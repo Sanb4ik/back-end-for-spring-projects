@@ -5,8 +5,9 @@ import checkAuth from '../helpers/auth.helper.js';
 
 const router = new Router();
 
-router.post('/auth/login', checkAuth, AuthController.login);
-router.get('/articles', ArticlesController.findAll);
-router.get('/articles/search/:searchTerm', ArticlesController.search);
+router.post('/auth/login', AuthController.login);
+router.post('/auth/refresh', AuthController.refresh);
+router.get('/articles', checkAuth, ArticlesController.findAll);
+router.get('/articles/search/:searchTerm', checkAuth, ArticlesController.search);
 
 export default router;

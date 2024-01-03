@@ -1,17 +1,18 @@
-import { ARTICLES_DATA } from '../constants/index.js';
+import { db } from '../config/db_connection.js';
+import { findAllArticles } from '../constants/index.js';
 
 class ArticlesService {
-  find() {
-    return ARTICLES_DATA;
+  async find() {
+    return db.any(findAllArticles);
   }
 
-  search(input) {
-    return ARTICLES_DATA.filter((item) => {
-      return (
+  async search(input) {
+    const articles = await db.any(findAllArticles);
+    return articles.filter(
+      (item) =>
         item.description.toLowerCase().includes(input.toLowerCase()) ||
-        item.title.toLowerCase().includes(input.toLowerCase())
-      );
-    });
+        item.title.toLowerCase().includes(input.toLowerCase()),
+    );
   }
 }
 
