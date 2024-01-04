@@ -13,7 +13,6 @@ export default function checkAuth(req, res, next) {
       return res.sendStatus(403);
     }
 
-    console.log(decoded);
     req.userId = decoded.userId;
     next();
   });

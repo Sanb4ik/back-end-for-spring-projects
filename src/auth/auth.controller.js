@@ -1,14 +1,19 @@
 import AuthService from './auth.service.js';
 
 class AuthController {
-  login(req, res) {
+  async signup(req, res) {
+    const { username, password, first_name, last_name, age } = req.body;
+    await AuthService.signup(username, password, first_name, last_name, age, res);
+  }
+
+  async login(req, res) {
     const { username, password } = req.body;
-    res.json(AuthService.login(username, password, res));
+    await AuthService.login(username, password, res);
   }
 
   refresh(req, res) {
     const refreshToken = req.cookies['refresh_token'];
-    res.json(AuthService.updateAccessToken(refreshToken, res));
+    AuthService.updateAccessToken(refreshToken, res);
   }
 }
 
