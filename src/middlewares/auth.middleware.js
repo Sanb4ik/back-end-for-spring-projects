@@ -1,19 +1,19 @@
 import jwt from 'jsonwebtoken';
+import { token } from '../constants/index.js';
 
 export default function checkAuth(req, res, next) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const accessToken = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
+  if (!accessToken) {
     return res.sendStatus(401);
   }
 
-  jwt.verify(token, 'access_secret', (err, decoded) => {
+  jwt.verify(accessToken, token.access.secret, (err) => {
     if (err) {
-      return res.sendStatus(403);
+      return res.sendStatus(401);
     }
 
-    req.userId = decoded.userId;
     next();
   });
 }

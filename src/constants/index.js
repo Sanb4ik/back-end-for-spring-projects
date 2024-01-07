@@ -10,7 +10,13 @@ export const findAllArticles = `
         pictures pic ON p.picture_id = pic.id;
     `;
 
-export const expiresIn = {
-  access: '10s',
-  refresh: '10m',
+export const token = {
+  access: {
+    secret: 'access_secret',
+    expiresIn: '10s',
+  },
+  refresh: {
+    secret: 'refresh_secret',
+    expiresIn: '10d',
+  },
 };

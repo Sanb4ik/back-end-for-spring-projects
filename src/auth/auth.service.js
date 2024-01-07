@@ -1,9 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { db } from '../config/db_connection.js';
-import { expiresIn } from '../constants/index.js';
-
-const secretKey = 'access_secret';
-const refreshSecret = 'refresh_secret';
+import { token } from '../constants/index.js';
 
 class AuthService {
   async signup(username, password, first_name, last_name, age, res) {
@@ -15,7 +12,7 @@ class AuthService {
       await db.none(addUserQuery, [username, password, first_name, last_name, age]);
       return res.sendStatus(201);
     }
-    return res.status(401).json({ message: 'User already exist' });
+    return res.status(401).json({ message: { username: 'User already exist' } });
   }
 
   async login(username, password, res) {
@@ -25,11 +22,13 @@ class AuthService {
     ]);
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: { username: 'Invalid credentials' } });
     }
-    const accessToken = jwt.sign({ userId: user.id }, secretKey, { expiresIn: expiresIn.access });
-    const refreshToken = jwt.sign({ userId: user.id }, refreshSecret, {
-      expiresIn: expiresIn.refresh,
+    const accessToken = jwt.sign({ userId: user.id, username: username }, token.access.secret, {
+      expiresIn: token.access.expiresIn,
+    });
+    const refreshToken = jwt.sign({ userId: user.id, username: username }, token.refresh.secret, {
+      expiresIn: token.refresh.expiresIn,
     });
 
     res.cookie('refresh_token', refreshToken, {
@@ -43,17 +42,21 @@ class AuthService {
 
   updateAccessToken(refreshToken, res) {
     if (!refreshToken) {
-      return res.sendStatus(401);
+      return res.sendStatus(403);
     }
 
     try {
-      const decoded = jwt.verify(refreshToken, refreshSecret);
-      const accessToken = jwt.sign({ userId: decoded.userId }, secretKey, {
-        expiresIn: expiresIn.access,
-      });
+      const decoded = jwt.verify(refreshToken, token.refresh.secret);
+      const accessToken = jwt.sign(
+        { userId: decoded.userId, username: decoded.username },
+        token.access.secret,
+        {
+          expiresIn: token.access.expiresIn,
+        },
+      );
       res.json({ accessToken });
     } catch (error) {
-      return res.sendStatus(403);
+      return res.sendStatus(401);
     }
   }
 }
