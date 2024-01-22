@@ -2,7 +2,8 @@ import AuthService from './auth.service.js';
 
 class AuthController {
   async signup(req, res) {
-    const { username, password, first_name, last_name, age } = req.body;
+    const { username, password, repeat_password, first_name, last_name, age } = req.body;
+    AuthService.validate(username, password, repeat_password, first_name, last_name, age, res);
     await AuthService.signup(username, password, first_name, last_name, age, res);
   }
 

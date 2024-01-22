@@ -2,11 +2,10 @@ import Router from 'express';
 import AuthController from '../auth/auth.controller.js';
 import ArticlesController from '../articles/articles.controller.js';
 import checkAuth from '../middlewares/auth.middleware.js';
-import { validateUser } from '../middlewares/validate.middleware.js';
 
 const router = new Router();
 
-router.post('/auth/signup', validateUser, AuthController.signup);
+router.post('/auth/signup', AuthController.signup);
 router.post('/auth/login', AuthController.login);
 router.post('/auth/refresh', AuthController.refresh);
 
